@@ -1,0 +1,28 @@
+# Binaries and build output
+**/bin/
+**/obj/
+
+# Node.js packages
+**/node_modules/
+
+# User-specific files
+*.user
+*.suo
+
+# Temporary files
+*.cache
+*.log
+*.bak
+
+# macOS files
+.DS_Store
+
+# Vim swap files
+*.swp
+*.swo
+
+# Visual Studio Code workspace
+.vs/
+
+# App settings (if they contain sensitive information)
+appsettings.json
