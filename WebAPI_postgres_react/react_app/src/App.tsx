@@ -1,21 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
-
-function Home() {
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold text-white mb-4">Home</h1>
-        </div>
-    );
-}
-
-function Create() {
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold text-white">Create Page</h1>
-        </div>
-    );
-}
+import Todo from "./pages/Todo";
+import About from "./pages/About";
 
 function App() {
     return (
@@ -26,20 +12,20 @@ function App() {
                         <div className="text-white font-bold text-xl">My App</div>
                         <ul className="flex space-x-4">
                             <li>
-                                <Link to="/" className="text-white hover:text-gray-300">Home</Link>
+                                <Link to="/" className="text-white hover:text-gray-300">Todo</Link>
                             </li>
                             <li>
-                                <Link to="/create" className="text-white hover:text-gray-300">Create</Link>
+                                <Link to="/about" className="text-white hover:text-gray-300">About</Link>
                             </li>
                         </ul>
                     </div>
                 </nav>
 
-                <main className="flex-grow pt-16 bg-gray-800">
+                <main className="flex-grow pt-20 bg-gray-800 text-white">
                     <div className="container mx-auto px-4">
                         <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/create" element={<Create />} />
+                            <Route path="/" element={<Todo />} />
+                            <Route path="/about" element={<About />} />
                         </Routes>
                     </div>
                 </main>

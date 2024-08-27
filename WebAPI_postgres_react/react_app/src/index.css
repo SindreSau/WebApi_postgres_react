@@ -6,3 +6,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+h1 {
+  @apply md:text-3xl text-2xl font-bold;
+}
+
+h2 {
+  @apply md:text-2xl text-xl font-bold;
+}

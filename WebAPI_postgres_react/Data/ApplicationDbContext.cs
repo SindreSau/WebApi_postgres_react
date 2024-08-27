@@ -11,5 +11,5 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<WeatherForecast> WeatherForecasts { get; set; }
+    public DbSet<TodoItem> TodoItems { get; set; }
 }
