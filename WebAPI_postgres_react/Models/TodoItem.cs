@@ -15,4 +15,6 @@ public class TodoItem
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    
+    public int Position { get; set; } // New field to store the item's position
 }

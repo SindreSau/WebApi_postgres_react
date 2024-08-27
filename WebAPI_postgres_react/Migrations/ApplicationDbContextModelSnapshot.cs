@@ -41,6 +41,9 @@ namespace WebAPI_postgres_react.Migrations
                     b.Property<bool>("IsComplete")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 

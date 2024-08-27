@@ -10,6 +10,7 @@ interface TodoItemType {
     isComplete: boolean;
     createdAt: string;
     updatedAt: string;
+    position: number;
 }
 
 const Todo: React.FC = () => {
@@ -25,7 +26,7 @@ const Todo: React.FC = () => {
         if (todoListRef.current) {
             const sortable = new Sortable(todoListRef.current, {
                 draggable: '.todo-item',
-                handle: '.drag-handle' // You'll need to add this class to a part of your TodoItem
+                handle: '.drag-handle'
             });
 
             sortable.on('sortable:stop', (event) => {
@@ -33,9 +34,15 @@ const Todo: React.FC = () => {
                 const newTodos = Array.from(todos);
                 const [reorderedItem] = newTodos.splice(oldIndex, 1);
                 newTodos.splice(newIndex, 0, reorderedItem);
-                setTodos(newTodos);
-                // Here you should also update the order on the server
-                updateTodoOrder(newTodos);
+
+                // Update positions based on new order
+                const updatedTodos = newTodos.map((todo, index) => ({
+                    ...todo,
+                    position: index
+                }));
+
+                setTodos(updatedTodos);
+                updateTodoOrder(updatedTodos);
             });
 
             return () => {
@@ -47,7 +54,8 @@ const Todo: React.FC = () => {
     const fetchTodos = async () => {
         const response = await fetch('/api/todoitems');
         const data = await response.json();
-        setTodos(data);
+        const sortedTodos = data.sort((a: TodoItemType, b: TodoItemType) => a.position - b.position);
+        setTodos(sortedTodos);
     };
 
     const handleAddTodo = async (e: React.FormEvent) => {
@@ -57,7 +65,11 @@ const Todo: React.FC = () => {
         const response = await fetch('/api/todoitems', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description: newTodo, isComplete: false }),
+            body: JSON.stringify({
+                description: newTodo,
+                isComplete: false,
+                position: todos.length // Set the position to the end of the list
+            }),
         });
 
         if (response.ok) {
@@ -105,10 +117,27 @@ const Todo: React.FC = () => {
     };
 
     const updateTodoOrder = async (newTodos: TodoItemType[]) => {
-        // Implement this function to update the order on the server
-        // You might need to add a new API endpoint for this
-        console.log('New order:', newTodos);
+        const positions = newTodos.map((todo, index) => ({
+            id: todo.id,
+            position: index
+        }));
+
+        try {
+            const response = await fetch('/api/todoitems/updatePositions', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(positions),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to update todo positions: ${response.status} ${response.statusText}\n${errorText}`);
+            }
+        } catch (error) {
+            console.error('Error updating todo positions:', error);
+        }
     };
+
 
     return (
         <div className="mx-auto">

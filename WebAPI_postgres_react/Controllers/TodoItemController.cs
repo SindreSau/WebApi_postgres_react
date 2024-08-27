@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI_postgres_react.Data;
 using WebAPI_postgres_react.Models;
 
-namespace WebAPI_postgres_react.Controller;
+namespace WebAPI_postgres_react.Controllers;
 
 [ApiController]
 [Route("api/[controller]s")]
@@ -20,7 +20,7 @@ public class TodoItemController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
     {
-        return await _context.TodoItems.ToListAsync();
+        return await _context.TodoItems.OrderBy(todoitem => todoitem.Position).ToListAsync();
     }
     
     
@@ -84,8 +84,30 @@ public class TodoItemController : ControllerBase
         return NoContent();
     }
 
+    // PUT: api/TodoItems/updatePositions
+    [HttpPut("updatePositions")]
+    public async Task<IActionResult> UpdatePositions([FromBody] List<TodoItemPosition> positions)
+    {
+        foreach (var position in positions)
+        {
+            var todoItem = await _context.TodoItems.FindAsync(position.Id);
+            if (todoItem != null)
+            {
+                todoItem.Position = position.Position;
+            }
+        }
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
     private bool TodoItemExists(long id)
     {
         return _context.TodoItems.Any(e => e.Id == id);
     }
+}
+
+public class TodoItemPosition
+{
+    public long Id { get; set; }
+    public int Position { get; set; }
 }

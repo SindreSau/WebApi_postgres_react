@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from './Button';
 import Input from './Input';
 import DraggableIcon from "./DraggableIcon";
+import {Simulate} from "react-dom/test-utils";
+import submit = Simulate.submit;
 
 interface TodoItemProps {
     id: number;
@@ -33,21 +35,33 @@ const TodoItem: React.FC<TodoItemProps> = ({
         setIsEditing(false);
     };
 
+    useEffect(() => {
+        if (isEditing) {
+            // Set focus to the input field when editing starts
+            const inputField = document.querySelector(`#edit-input-${id}`) as HTMLInputElement;
+            if (inputField) {
+                inputField.focus();
+            }
+        }
+    }, [isEditing]);
+
     return (
         <div className={`todo-item bg-gray-700 p-3 rounded mb-2 flex items-center justify-between ${isEditing ? 'border border-blue-500' : ''}`}>
             <div className="flex items-center flex-grow">
                 <DraggableIcon />
                 <div className="flex mr-4" onClick={(e) => e.preventDefault()}>
                     {isEditing ? (
-                        <form onSubmit={handleSubmit} className="flex items-center">
+                        <form className="flex items-center">
+                            {/*Edit existing todoitems*/}
                             <Input
                                 type="text"
+                                id={`edit-input-${id}`}
                                 value={editedDescription}
                                 onChange={(e) => setEditedDescription(e.target.value)}
                                 required
                                 className="flex-grow mr-2"
                             />
-                            <Button type="submit" className="mr-2">Save</Button>
+                            <Button type="submit" onClick={handleSubmit} className="mr-2">Save</Button>
                             <Button type="button" variant="secondary" onClick={() => setIsEditing(false)}>
                                 Cancel
                             </Button>
